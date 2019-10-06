@@ -3,7 +3,7 @@ from pygame.locals import *
 import random
 import math
 
-nvertices = 5
+nvertices = 8
 width = 500
 height = 500
 count = 0
@@ -15,7 +15,7 @@ caminhoMin = []
 grafo = []
 populacao = []
 score = []
-
+popSize = 10
 def calcDist(c):
     sum = 0
     for i in range (nvertices-1):
@@ -31,6 +31,7 @@ def dist( n1, n2, n3,  n4):
 
 def calcScore():
     global populacao, minDist,caminhoMin,score
+    score = []
     for i in range(len(populacao)):
         d = calcDist(populacao[i])
         if d < minDist:
@@ -49,18 +50,40 @@ def pickOne():
     global score, populacao
     index = 0
     r = random.random()
-    
     while(r > 0):
         r -= score[index]
         index += 1
     index -= 1
     return populacao[index].copy()
 
+def crossOver(seq1,seq2):
+    ini = random.randint(0, len(seq1)-1)
+    end = random.randint(ini, len(seq1)-1)
+    newSeq = seq1[ini:end]
+    for i in range(len(seq2)):
+        c = seq2[i]
+        if newSeq.count(c)==0:
+            newSeq.append(c)
+    return newSeq
+    
+
+def mutate(seq):
+    id1 = random.randint(0,len(seq)-1)
+    id2 = random.randint(0,len(seq)-1)
+    aux = seq[id1]
+    seq[id1] = seq[id2]
+    seq[id2] = aux
+    return seq
+
+# Melhorar
 def nextGen():
     global populacao
     newPop = []
     for i in range(len(populacao)):
-        ind = pickOne()
+        ind1 = pickOne()
+        ind2 = pickOne()
+        ind = crossOver(ind1,ind2)
+        ind = mutate(ind)
         newPop.append(ind)
     populacao = newPop
 
@@ -69,7 +92,7 @@ def nextGen():
 for i in range(nvertices):
     grafo.append((random.randint(0,width),random.randint(0,height)))
     caminho.append(i)
-for i in range(10):
+for i in range(popSize):
     populacao.append(caminho.copy())
     random.shuffle(populacao[i])
 # calcula score
