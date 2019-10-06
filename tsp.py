@@ -2,8 +2,12 @@ import pygame
 from pygame.locals import * 
 import random
 import math
+import time
+import sys
 
-nvertices = 4
+arg = sys.argv
+t = time.time()
+nvertices = int(arg[1])
 width = 500
 height = 500
 count = 0
@@ -89,6 +93,7 @@ while True:
     #print(d)
     #print('{}% completo'.format(count*100/fnv))
     if(permute() == -1):
+        print("Elapsed time:", (time.time() -t), "sec")
         screen.fill((0,0,0))
         aux = []
         for i in range(len(grafo)):

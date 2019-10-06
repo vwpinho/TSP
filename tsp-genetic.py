@@ -2,12 +2,17 @@ import pygame
 from pygame.locals import * 
 import random
 import math
+import sys
+import time
 
-nvertices = 8
+argv = sys.argv
+t = time.time()
+nvertices = int(argv[1])
 width = 500
 height = 500
 count = 0
 minDist = 99999
+nGen = 0
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption('TSP')
 caminho = []
@@ -15,7 +20,8 @@ caminhoMin = []
 grafo = []
 populacao = []
 score = []
-popSize = 10
+popSize = int(argv[2])
+mutRate = float(argv[3])
 def calcDist(c):
     sum = 0
     for i in range (nvertices-1):
@@ -76,6 +82,7 @@ def mutate(seq):
     return seq
 
 # Melhorar
+# Usando a funcao prob pickOne temos selecao
 def nextGen():
     global populacao
     newPop = []
@@ -83,7 +90,8 @@ def nextGen():
         ind1 = pickOne()
         ind2 = pickOne()
         ind = crossOver(ind1,ind2)
-        ind = mutate(ind)
+        if(random.random() < mutRate):
+            ind = mutate(ind)
         newPop.append(ind)
     populacao = newPop
 
@@ -109,6 +117,8 @@ while True:
     calcScore()
     normalizeScore()
     nextGen()
+    nGen += 1
+    print("Elapsed time:", (time.time() -t), "sec" )
     for i in range(len(grafo)):
         pygame.draw.circle(screen,(255,255,255),grafo[i],10)
     for i in range(nvertices):
